@@ -41,3 +41,5 @@ VECTOR_STORE_DIRECTORY = "vector_store"
 # ---------------------------------------------------------------------------
 
 TOP_K_RETRIEVAL = 5
+
+SUPPORTED_FILE_TYPES = [".pdf"]
