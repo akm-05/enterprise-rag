@@ -117,12 +117,12 @@ class SourceMetadata(BaseModel):
     * The frontend can render rich inline citations with document links.
 
     Field constraints
-    -----------------
-    ``document`` and ``section`` have ``min_length=1`` to prevent empty
-    strings slipping through from inconsistent document-parsing output.
-    ``page`` enforces ``ge=1`` because all real document formats are
-    1-indexed; allowing ``page=0`` would silently introduce off-by-one bugs
-    in any frontend "jump to page" feature.
+   -----------------
+    source has min_length=1 to prevent empty filenames slipping through
+    from inconsistent document-parsing output.
+
+    page enforces ge=1 because all real document formats are 1-indexed;
+    allowing page=0 would silently introduce off-by-one bugs. 
 
     ``str_strip_whitespace=True`` normalises filenames and section labels
     that may carry extraneous whitespace from PDF or DOCX metadata extraction.
@@ -133,7 +133,7 @@ class SourceMetadata(BaseModel):
         frozen=True,                # provenance records are read-only by nature
     )
 
-    document: str = Field(
+    source: str = Field(
         ...,
         min_length=1,
         description=(
@@ -143,20 +143,7 @@ class SourceMetadata(BaseModel):
         ),
         examples=["HR_Policy.pdf"],
     )
-
-    section: str = Field(
-        ...,
-        min_length=1,
-        description=(
-            "Section or chapter label within the document where the "
-            "supporting evidence was found. "
-            "Examples: '3.1', 'Appendix A', 'Chapter 4 — Leave Policy'. "
-            "Enables users to navigate directly to the relevant passage "
-            "without reading the full document."
-        ),
-        examples=["3.1"],
-    )
-
+    
     page: int = Field(
         ...,
         ge=1,

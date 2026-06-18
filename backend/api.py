@@ -26,6 +26,10 @@ from typing import AsyncIterator
 from fastapi import APIRouter, FastAPI
 from pydantic import BaseModel
 
+from backend.models import QueryRequest, QueryResponse
+from backend.rag_pipeline import answer_question
+from fastapi import HTTPException
+
 
 # ---------------------------------------------------------------------------
 # Response Models
@@ -123,3 +127,29 @@ async def health_check() -> HealthResponse:
 # Register routers
 # Future routers (query, ingest, admin) are mounted here in the same pattern.
 app.include_router(health_router)
+
+# QUERY ROUTER
+query_router = APIRouter(tags=["Query"])
+
+@query_router.post(
+    "/query",
+    response_model=QueryResponse,
+    summary="Ask a question",
+)
+async def query(request: QueryRequest) -> QueryResponse:
+    try:
+        return answer_question(request.question)
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc)
+        )
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=str(exc)
+        )
+
+app.include_router(query_router)
